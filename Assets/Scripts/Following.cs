@@ -72,38 +72,40 @@ public class Following : MonoBehaviour
         }
     }
 
-    //void ShootingBoubouleBehavior()
-    //{
-    //    transform.position = shootingPoint.transform.position;
-    //    Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-    //    RaycastHit hit;
-
-    //    if (Physics.Raycast(camRay, out hit))
-    //    {
-    //        lookP = hit.point - transform.position;
-    //        lookP.z = transform.position.z;
-    //        thePlayerController.GetComponent<PlayerController>().lookPos = lookP;
-    //    }
-    //    Debug.DrawLine(shootingPoint.transform.position, lookP, Color.black);
-    //}
-
-    void PlaneRaycast()
+    void ShootingBoubouleBehavior()
     {
         transform.position = shootingPoint.transform.position;
         Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        float enter = 100.0f;
+        RaycastHit hit;
 
-        //RaycastHit hit;
-
-        if (m_Plane.Raycast(camRay, out enter))
+        if (Physics.Raycast(camRay, out hit, Mathf.Infinity))
         {
-            lookP = camRay.GetPoint(enter);
+            lookP = hit.point;
+            Debug.Log(lookP);
+            Debug.Log(Input.mousePosition);
+            lookP.z = shootingPoint.transform.position.z;
             thePlayerController.GetComponent<PlayerController>().lookPos = lookP;
         }
-        Debug.DrawLine(transform.position, lookP, Color.black);
+        Debug.DrawLine(shootingPoint.transform.position, lookP, Color.black);
     }
+
+    //void PlaneRaycast()
+    //{
+    //    transform.position = shootingPoint.transform.position;
+    //    Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+    //    float enter = 100.0f;
+
+    //    //RaycastHit hit;
+
+    //    if (m_Plane.Raycast(camRay, out enter))
+    //    {
+    //        lookP = camRay.GetPoint(enter);
+    //        thePlayerController.GetComponent<PlayerController>().lookPos = lookP;
+    //    }
+    //    Debug.DrawLine(transform.position, lookP, Color.black);
+    //}
 
     void Update()
     {
@@ -111,7 +113,6 @@ public class Following : MonoBehaviour
         if (followingStance == true && shootingStance == false && freeStance == false)
         {
             NormalBoubouleBehavior();
-            Debug.DrawLine(transform.position, lookP, Color.black);
 
             if (Input.GetButton("Fire1") && isThrowable == true)
             {
@@ -122,16 +123,35 @@ public class Following : MonoBehaviour
         }
         else if (shootingStance == true && followingStance == false && freeStance == false)
         {
-            PlaneRaycast();
+            ShootingBoubouleBehavior();
+
+            float force = 1;
 
             if (Input.GetButtonUp("Fire1"))
             {
-                rb.AddForce(lookP * boubouleStrength);
+                if (lookP.x < 0)
+                {
+                    if (lookP.x > thePlayerController.transform.position.x)
+                    {
+                        force = -1;
+                    }
+                }
+                else if (lookP.x > 0)
+                {
+                    if (lookP.x < thePlayerController.transform.position.x)
+                    {
+                        force = -1;
+                    }
+                }
+
+                rb.velocity = lookP * boubouleStrength * force;
                 followingStance = false;
                 shootingStance = false;
                 freeStance = true;
                 isThrowable = false;
             }
+
+
         }
         else if (freeStance == true && followingStance == false && shootingStance == false)
         {

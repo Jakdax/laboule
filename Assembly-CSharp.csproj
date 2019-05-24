@@ -62,7 +62,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\BoubouleShot.cs" />
     <Compile Include="Assets\FollowCamera.cs" />
     <Compile Include="Assets\MultipleTargetCamera.cs" />
     <Compile Include="Assets\Scripts\Bouboule\StatesManager.cs" />
