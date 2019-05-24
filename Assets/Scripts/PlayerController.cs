@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public GameObject bouboule;
+    public GameObject thePlayer;
+
     public float moveSpeed;
     public float jumpForce;
     public CharacterController controller;
     private bool jumped;
 
-    private Vector3 moveDirection;
+    public Vector3 moveDirection;
     private Vector3 lookDirection;
     public float gravityScale;
     private float lastDirection;
@@ -30,12 +33,35 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15);
     }
 
+    void Teleport()
+    {
+        Vector3 teleportPosition = new Vector3(bouboule.transform.position.x, bouboule.transform.position.y, 0);
+        Debug.Log(teleportPosition);
+        Debug.Log(thePlayer.transform.position);
+        controller.Move(teleportPosition - transform.position);
+        Debug.Log(thePlayer.transform.position + "2");
+        moveDirection.y = teleportPosition.y + (Physics.gravity.y * gravityScale);
+    }
+
     private void Update()
     {
 
-        moveDirection = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, moveDirection.y,0 );
+        if (Input.GetButtonDown("Fire3") && bouboule.GetComponent<Following>().freeStance)
+        {
+            Debug.Log(bouboule.GetComponent<Following>().freeStance);
+            Teleport();
+        }
 
-        lookDirection = Vector3.Normalize(new Vector3(Input.GetAxis("Horizontal"), 0f, 0f));
+        moveDirection = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, moveDirection.y, 0);
+
+        if (Input.GetButton("Fire1"))
+        {
+            HandleRotation();
+        }
+        else
+        {
+            lookDirection = Vector3.Normalize(new Vector3(Input.GetAxis("Horizontal"), 0f, 0f));
+        }
 
         if (Input.GetAxis("Horizontal") != 0)
         {
@@ -58,6 +84,5 @@ public class PlayerController : MonoBehaviour
 
         moveDirection.y = moveDirection.y + (Physics.gravity.y * gravityScale);
         controller.Move(moveDirection * Time.deltaTime);
-        HandleRotation();
     }
 }

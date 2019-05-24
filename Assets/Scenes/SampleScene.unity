@@ -2446,9 +2446,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16358aff325d664cbee98adf26a3b7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bouboule: {fileID: 595606862}
+  thePlayer: {fileID: 284513264}
   moveSpeed: 20
   jumpForce: 40
   controller: {fileID: 0}
+  moveDirection: {x: 0, y: 0, z: 0}
   gravityScale: 0.1
   lookPos: {x: 0, y: 0, z: 0}
 --- !u!54 &284513266
@@ -5123,14 +5126,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 256618404f885ac4f98fb889c8cd7948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootingPoint: {fileID: 1407122645}
-  boubouleStrength: 0.5
   thePlayer: {fileID: 284513264}
+  bouboule: {fileID: 595606862}
+  shootingPoint: {fileID: 1407122645}
+  boubouleStrength: 1000
   targetDistance: 0
   allowedDistance: 2.5
   rotationSpeed: 300
-  bouboule: {fileID: 595606862}
   followSpeed: 20
+  freeStance: 0
   isThrowable: 1
 --- !u!54 &595606868
 Rigidbody:
@@ -10916,7 +10920,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1388910039
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10971,7 +10975,7 @@ Transform:
   m_GameObject: {fileID: 1388910037}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 7.12, z: 5.68}
-  m_LocalScale: {x: 50, y: 14.62, z: 1}
+  m_LocalScale: {x: 300, y: 14.62, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8

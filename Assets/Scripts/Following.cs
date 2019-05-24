@@ -4,31 +4,36 @@ using UnityEngine;
 
 public class Following : MonoBehaviour
 {
-    //Find Player
+    //Find Player and bouboule
     GameObject thePlayerController;
+    public GameObject thePlayer;
+    public GameObject bouboule;
+
+    //Handle Bouboule gravity
+    Rigidbody rb;
 
     //Aiming and shooting variables
-    Rigidbody rb;
     public GameObject shootingPoint;
     public float boubouleStrength;
     Vector3 lookP;
+    Vector3 f;
+    Plane m_Plane;
 
     //Following and orbiting around Variables
-    public GameObject thePlayer;
     public float targetDistance;
     public float allowedDistance;
     public float rotationSpeed;
 
     //Following and orbiting around Variables
-    public GameObject bouboule;
     public float followSpeed;
     public RaycastHit Shot;
 
     //States managing variables
     private bool followingStance = true;
     private bool shootingStance = false;
-    private bool freeStance = false;
+    public bool freeStance = false;
     public bool isThrowable = true;
+
 
 
     void Awake()
@@ -72,40 +77,26 @@ public class Following : MonoBehaviour
         }
     }
 
-    void ShootingBoubouleBehavior()
+    void PlaneRaycast()
     {
         transform.position = shootingPoint.transform.position;
         Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        RaycastHit hit;
+        float enter = 100.0f;
 
-        if (Physics.Raycast(camRay, out hit, Mathf.Infinity))
+        if (m_Plane.Raycast(camRay, out enter))
         {
-            lookP = hit.point;
-            Debug.Log(lookP);
-            Debug.Log(Input.mousePosition);
-            lookP.z = shootingPoint.transform.position.z;
+            lookP = camRay.GetPoint(enter);
             thePlayerController.GetComponent<PlayerController>().lookPos = lookP;
+            f = (lookP - transform.position).normalized * boubouleStrength;
         }
-        Debug.DrawLine(shootingPoint.transform.position, lookP, Color.black);
+        Debug.DrawLine(transform.position, f, Color.black);
     }
 
-    //void PlaneRaycast()
-    //{
-    //    transform.position = shootingPoint.transform.position;
-    //    Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+    void BoubouleBehaviorRoutine()
+    {
 
-    //    float enter = 100.0f;
-
-    //    //RaycastHit hit;
-
-    //    if (m_Plane.Raycast(camRay, out enter))
-    //    {
-    //        lookP = camRay.GetPoint(enter);
-    //        thePlayerController.GetComponent<PlayerController>().lookPos = lookP;
-    //    }
-    //    Debug.DrawLine(transform.position, lookP, Color.black);
-    //}
+    }
 
     void Update()
     {
@@ -123,41 +114,30 @@ public class Following : MonoBehaviour
         }
         else if (shootingStance == true && followingStance == false && freeStance == false)
         {
-            ShootingBoubouleBehavior();
-
-            float force = 1;
+            PlaneRaycast();
 
             if (Input.GetButtonUp("Fire1"))
             {
-                if (lookP.x < 0)
-                {
-                    if (lookP.x > thePlayerController.transform.position.x)
-                    {
-                        force = -1;
-                    }
-                }
-                else if (lookP.x > 0)
-                {
-                    if (lookP.x < thePlayerController.transform.position.x)
-                    {
-                        force = -1;
-                    }
-                }
-
-                rb.velocity = lookP * boubouleStrength * force;
+                rb.AddForce(f.x, f.y, 0f);
                 followingStance = false;
                 shootingStance = false;
                 freeStance = true;
                 isThrowable = false;
             }
-
-
         }
         else if (freeStance == true && followingStance == false && shootingStance == false)
         {
             FreeBouboule();
 
             if (Input.GetButtonDown("Fire2"))
+            {
+                rb.useGravity = false;
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                freeStance = false;
+                followingStance = true;
+            }
+            else if (Input.GetButtonDown("Fire3"))
             {
                 rb.useGravity = false;
                 rb.velocity = Vector3.zero;
@@ -172,10 +152,6 @@ public class Following : MonoBehaviour
     {
 
     }
-
-    Plane m_Plane;
-
-
 }
 
 
